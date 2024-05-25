@@ -14,6 +14,11 @@
         <td th:text="${user.username}">Username</td>
         <td th:text="${user.password}">Password</td>
     </tr>
+
 </table>
+
+<form th:action="@{/logout}" method="post">
+    <button type="submit">Logout</button>
+</form>
 </body>
 </html>

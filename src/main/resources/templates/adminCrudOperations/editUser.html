@@ -13,6 +13,13 @@
     <label for="password">Enter password:</label>
     <input type="text" th:field="*{password}" id="password"/>
     <br/>
+    <label>Select Roles:</label><br/>
+    <div th:each="role : ${roles}">
+        <input type="checkbox" th:id="'role_' + ${role}" th:name="'roles'" th:value="${role}"
+               th:checked="${user.roles.contains(role)}"/>
+        <label th:for="'role_' + ${role}" th:text="${role}"></label><br/>
+    </div>
+    <br/>
     <input type="submit" value="UPDATE"/>
 </form>
 

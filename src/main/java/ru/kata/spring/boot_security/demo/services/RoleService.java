@@ -1,18 +1,19 @@
-package ru.kata.spring.boot_security.demo.repositories;
+package ru.kata.spring.boot_security.demo.services;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.core.GrantedAuthority;
 import ru.kata.spring.boot_security.demo.models.Role;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface RoleRepository {
+public interface RoleService {
     Role findByName(String name);
 
     void saveRole(Role role);
 
     List<Role> findAll();
 
-    Optional<Role> findRoleById(long id);
+    Role findRoleById(long id);
 
     void updateRole(Role updatedRole);
 

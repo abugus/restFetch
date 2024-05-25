@@ -1,12 +1,16 @@
 package ru.kata.spring.boot_security.demo.models;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -18,19 +22,17 @@ public class User implements UserDetails {
     @Column(name = "username")
     private String username;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @LazyCollection(LazyCollectionOption.EXTRA)
+    @Fetch(FetchMode.JOIN)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles = new HashSet<>();
-
-//    private boolean enabled;
+    private Collection<Role> roles = new ArrayList<>();
 
     private String password;
-    @Transient
-    private String passwordConfirm;
     @Transient
     private String role;
 
@@ -42,7 +44,7 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    public User(String password, String username) {
+    public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
@@ -58,6 +60,7 @@ public class User implements UserDetails {
         this.id = id;
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
@@ -87,16 +90,18 @@ public class User implements UserDetails {
     }
 
 
-    public Set<Role> getRoles() {
+    public Collection<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(Collection<Role> roles) {
         this.roles = roles;
     }
 
     public void addRole(Role role) {
-        this.roles.add(role);
+        if (!roles.contains(role)) {
+            this.roles.add(role);
+        }
     }
 
     @Override
@@ -104,20 +109,13 @@ public class User implements UserDetails {
         return getRoles();
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getPasswordConfirm() {
-        return passwordConfirm;
-    }
-
-    public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
     }
 
     @Override

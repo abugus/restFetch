@@ -16,9 +16,17 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="password"/>
     </div>
+
+    <label>Select Roles:</label><br/>
+    <div th:each="role : ${roles}">
+        <input type="checkbox" th:id="'role_' + ${role}" th:name="'roles'" th:value="${role}"/>
+        <label th:for="'role_' + ${role}" th:text="${role}"></label><br/>
+    </div>
+
     <div>
         <button type="submit">Confirm registration</button>
     </div>
+
 
 </form>
 </body>
