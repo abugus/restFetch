@@ -40,6 +40,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/registration").not().authenticated()
                 .requestMatchers("/user/**").hasRole("USER")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/admin/**").not().anonymous()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().successHandler(successUserHandler)

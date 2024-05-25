@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
-    <title>Spring Security Example</title>
+    <title>User Info</title>
 </head>
 <body>
-<h2>User Information</h2>
+<h1>User Information</h1>
 <table>
+    <thead th:border="1">
     <tr>
-        <th>Username</th>
-        <th>Password</th>
+    <th>Username</th>
+    <th>Password</th>
     </tr>
+    </thead>
+    <tbody th:border="1">
     <tr>
         <td th:text="${user.username}">Username</td>
         <td th:text="${user.password}">Password</td>
     </tr>
-
+    </tbody>
 </table>
-
+<br>
 <form th:action="@{/logout}" method="post">
     <button type="submit">Logout</button>
 </form>

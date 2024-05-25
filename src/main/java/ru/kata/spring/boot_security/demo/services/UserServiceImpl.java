@@ -1,10 +1,6 @@
 package ru.kata.spring.boot_security.demo.services;
 
-import jakarta.persistence.NoResultException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,7 +12,6 @@ import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -71,12 +66,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public boolean deleteUser(long id) {
+    public void deleteUser(long id) {
         if (userRepository.findUserById(id) != null) {
             userRepository.deleteUser(id);
-            return true;
         }
-        return false;
+    }
+
+    @Override
+    public User getCurrentUser() {
+        return userRepository.getCurrentUser();
     }
 
     @Override
@@ -95,15 +93,6 @@ public class UserServiceImpl implements UserService {
         if (userFromDB != null) {
             return false;
         }
-//        if (user.getRole() == null) {
-//            user.setRoles(Collections.singleton(roleService.findByName("ROLE_USER")));
-//        } else {
-//            if (user.getRole().equals("user")) {
-//                user.setRoles(Collections.singleton(roleService.findByName("ROLE_USER")));
-//            } else if (user.getRole().equals("admin")) {
-//                user.addRole((roleService.findByName("ROLE_ADMIN")));
-//            }
-//        }
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         Collection<Role> roles = new ArrayList<>();
         for (Role role : user.getRoles()) {
@@ -118,6 +107,4 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         return true;
     }
-
-
 }

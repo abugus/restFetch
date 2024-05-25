@@ -4,6 +4,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.models.User;
 
@@ -16,7 +19,6 @@ public class UserRepositoryImpl implements UserRepository {
     private EntityManager entityManager;
 
     @Override
-    @Query("Select u from User u left join fetch u.roles where u.username=:username")
     public User findByUsername(String username) {
         try {
             return entityManager.createQuery("FROM User WHERE username = :name", User.class)
@@ -51,5 +53,15 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void deleteUser(long id) {
         entityManager.remove(entityManager.find(User.class, id));
+    }
+
+    @Override
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            return (User) userDetails;
+        }
+        return null;
     }
 }

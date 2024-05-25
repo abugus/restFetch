@@ -1,6 +1,11 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,20 +35,19 @@ public class AdminController {
     }
 
     @GetMapping("/create")
-    public String addUserForm(@ModelAttribute User user) {
+    public String addUserForm(@ModelAttribute User user, Model model) {
+        model.addAttribute("roles", roleService.findAll());
         return "adminCrudOperations/createUser";
     }
 
 
     @PostMapping("/create")
-    public String addUser(@ModelAttribute @Valid User user,BindingResult bindingResult,
-                          @RequestParam("role") String role, Model model) {
-        user.setRole(role);
+    public String addUser(@ModelAttribute @Valid User user, BindingResult bindingResult,
+                          Model model) {
         if (!userService.saveUser(user)) {
-            model.addAttribute("errorText", "Пользователь с таким именем уже существует");
+            model.addAttribute("error", bindingResult);
             return "errorInfo";
         }
-
         return "redirect:/admin";
     }
 
@@ -57,8 +61,8 @@ public class AdminController {
     @PostMapping("/edit")
     public String editUser(@ModelAttribute("userForm") @Valid User user
             , BindingResult bindingResult, Model model) {
-        if(bindingResult.hasErrors()){
-            model.addAttribute("error",bindingResult);
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("error", bindingResult);
             return "errorInfo";
         }
 
@@ -67,8 +71,14 @@ public class AdminController {
     }
 
     @PostMapping("/delete")
-    public String deleteUser(@RequestParam("id") long id) {
+    public String deleteUser(@RequestParam("id") Long id, HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long currentUserId = (long)userService.getCurrentUser().getId();
         userService.deleteUser(id);
+        if (currentUserId.equals(id)) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+            return "redirect:/login?logout";
+        }
         return "redirect:/admin";
     }
 }
