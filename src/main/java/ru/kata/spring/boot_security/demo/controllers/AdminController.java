@@ -11,19 +11,22 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
-import ru.kata.spring.boot_security.demo.services.RoleServiceImpl;
+import ru.kata.spring.boot_security.demo.services.RoleService;
 import ru.kata.spring.boot_security.demo.services.UserService;
 
-import java.util.ArrayList;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
     private final UserService userService;
-    private final RoleServiceImpl roleService;
+    private final RoleService roleService;
 
-    public AdminController(UserService userService, RoleServiceImpl roleService) {
+    public AdminController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
     }
@@ -44,6 +47,10 @@ public class AdminController {
     @PostMapping("/create")
     public String addUser(@ModelAttribute @Valid User user, BindingResult bindingResult,
                           Model model) {
+        Set<Role> roles = user.getRoles().stream()
+                .map((Role name) -> roleService.findByName(name.getName()))
+                .collect(Collectors.toSet());
+        user.setRoles(roles);
         if (!userService.saveUser(user)) {
             model.addAttribute("error", bindingResult);
             return "errorInfo";
@@ -65,13 +72,13 @@ public class AdminController {
             model.addAttribute("error", bindingResult);
             return "errorInfo";
         }
-
         userService.updateUser(user);
         return "redirect:/admin";
     }
 
     @PostMapping("/delete")
-    public String deleteUser(@RequestParam("id") Long id, HttpServletRequest request, HttpServletResponse response) {
+    public String deleteUser(@RequestParam("id") Long id, HttpServletRequest request,
+                             HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long currentUserId = (long)userService.getCurrentUser().getId();
         userService.deleteUser(id);

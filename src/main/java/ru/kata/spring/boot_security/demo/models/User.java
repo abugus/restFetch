@@ -8,10 +8,10 @@ import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.nio.file.attribute.UserPrincipal;
-import java.util.ArrayList;
+
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -23,7 +23,7 @@ public class User implements UserDetails {
     @Column(name = "username")
     private String username;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @LazyCollection(LazyCollectionOption.EXTRA)
     @Fetch(FetchMode.JOIN)
     @JoinTable(
@@ -31,19 +31,9 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Collection<Role> roles = new ArrayList<>();
+    private Set<Role> roles = new HashSet<>();
 
     private String password;
-    @Transient
-    private String role;
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 
     public User(String username, String password) {
         this.username = username;
@@ -91,11 +81,11 @@ public class User implements UserDetails {
     }
 
 
-    public Collection<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Collection<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 

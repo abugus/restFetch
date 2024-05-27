@@ -7,8 +7,9 @@
 <body>
 
 <form th:method="patch" th:action="@{'/admin/edit?id=' + ${user.getId()}}" th:object="${user}">
-    <label for="name">Enter name:</label>
-    <input type="text" th:field="*{username}" id="name"/>
+    <label for="name">Name:</label>
+    <span th:text="${user.username}"></span>
+    <input type="hidden" th:field="*{username}" id="name"/>
     <br/>
     <label for="password">Enter password:</label>
     <input type="text" th:field="*{password}" id="password"/>

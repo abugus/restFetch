@@ -1,15 +1,13 @@
 package ru.kata.spring.boot_security.demo.services;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 
 import java.util.List;
 
-@Repository
+@Service
 @Transactional(readOnly = true)
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
