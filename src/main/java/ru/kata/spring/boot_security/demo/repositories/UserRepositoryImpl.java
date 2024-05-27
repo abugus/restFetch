@@ -47,7 +47,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void updateUser(User userToUpdate) {
-        entityManager.persist(userToUpdate);
+        entityManager.merge(userToUpdate);
     }
 
     @Override

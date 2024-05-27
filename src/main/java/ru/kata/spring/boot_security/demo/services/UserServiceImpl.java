@@ -51,6 +51,7 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         userFromDB.setPassword(bCryptPasswordEncoder.encode(userToUpdate.getPassword()));
+        userFromDB.setRoles(userToUpdate.getRoles());
         userRepository.updateUser(userFromDB);
         return true;
     }

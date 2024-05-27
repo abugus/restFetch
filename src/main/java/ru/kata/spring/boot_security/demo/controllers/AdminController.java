@@ -72,6 +72,10 @@ public class AdminController {
             model.addAttribute("error", bindingResult);
             return "errorInfo";
         }
+        Set<Role> roles = user.getRoles().stream()
+                .map((Role name) -> roleService.findByName(name.getName()))
+                .collect(Collectors.toSet());
+        user.setRoles(roles);
         userService.updateUser(user);
         return "redirect:/admin";
     }
@@ -80,7 +84,7 @@ public class AdminController {
     public String deleteUser(@RequestParam("id") Long id, HttpServletRequest request,
                              HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long currentUserId = (long)userService.getCurrentUser().getId();
+        Long currentUserId = userService.getCurrentUser().getId();
         userService.deleteUser(id);
         if (currentUserId.equals(id)) {
             new SecurityContextLogoutHandler().logout(request, response, auth);

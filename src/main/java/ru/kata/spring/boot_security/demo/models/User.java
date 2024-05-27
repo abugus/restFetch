@@ -43,7 +43,7 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
