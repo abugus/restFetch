@@ -43,9 +43,11 @@ public class AdminController {
     @PostMapping("/create")
     public String addUser(@ModelAttribute @Valid User user, BindingResult bindingResult,
                           Model model) {
-        Set<Role> roles = user.getRoles().stream()
-                .map((Role name) -> roleService.findByName(name.getName()))
-                .collect(Collectors.toSet());
+        Set<Role> roles = roleService.findByNames(
+                user.getRoles().stream()
+                        .map(Role::getName)
+                        .collect(Collectors.toSet())
+        );
         user.setRoles(roles);
         if (!userService.saveUser(user)) {
             model.addAttribute("error", bindingResult);
@@ -60,9 +62,11 @@ public class AdminController {
             model.addAttribute("error", bindingResult);
             return "errorInfo";
         }
-        Set<Role> roles = user.getRoles().stream()
-                .map(role -> roleService.findByName(role.getName()))
-                .collect(Collectors.toSet());
+        Set<Role> roles = roleService.findByNames(
+                user.getRoles().stream()
+                        .map(Role::getName)
+                        .collect(Collectors.toSet())
+        );
         user.setRoles(roles);
         userService.updateUser(user);
         return "redirect:/admin";

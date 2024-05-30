@@ -3,11 +3,15 @@ package ru.kata.spring.boot_security.demo.repositories;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.models.Role;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 public class RoleRepositoryImpl implements RoleRepository {
@@ -22,6 +26,13 @@ public class RoleRepositoryImpl implements RoleRepository {
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    @Override
+    public Set<Role> findByNames(Set<String> names) {
+        return new HashSet<>(entityManager.createQuery(
+                "SELECT r FROM Role r WHERE r.name IN :names",
+                Role.class).setParameter("names", names).getResultList());
     }
 
     @Override
