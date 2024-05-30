@@ -33,14 +33,10 @@ public class AdminController {
 
     @GetMapping
     public String mainPage(Model model) {
-        model.addAttribute("users", userService.findAll());
-        return "admin";
-    }
-
-    @GetMapping("/create")
-    public String addUserForm(@ModelAttribute User user, Model model) {
         model.addAttribute("roles", roleService.findAll());
-        return "adminCrudOperations/createUser";
+        model.addAttribute("users", userService.findAll());
+        model.addAttribute("user",userService.getCurrentUser());
+        return "admin";
     }
 
 
@@ -58,27 +54,20 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/edit")
-    public String editUserForm(@RequestParam("id") long id, Model model) {
-        model.addAttribute("user", userService.findUserById(id));
-        model.addAttribute("roles", roleService.findAll());
-        return "adminCrudOperations/editUser";
-    }
-
-    @PostMapping("/edit")
-    public String editUser(@ModelAttribute("userForm") @Valid User user
-            , BindingResult bindingResult, Model model) {
+    @PatchMapping("/edit")
+    public String editUser(@ModelAttribute @Valid User user, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("error", bindingResult);
             return "errorInfo";
         }
         Set<Role> roles = user.getRoles().stream()
-                .map((Role name) -> roleService.findByName(name.getName()))
+                .map(role -> roleService.findByName(role.getName()))
                 .collect(Collectors.toSet());
         user.setRoles(roles);
         userService.updateUser(user);
         return "redirect:/admin";
     }
+
 
     @PostMapping("/delete")
     public String deleteUser(@RequestParam("id") Long id, HttpServletRequest request,

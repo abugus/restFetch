@@ -1,27 +1,198 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>User Info</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>User Page</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"/>
+    <style>
+        body {
+            padding-top: 56px; /* Отступ для навигационной панели */
+            display: flex;
+        }
+
+        .sidebar {
+            height: 100vh; /* Полная высота экрана */
+            position: fixed;
+            top: 56px; /* Учитываем высоту навигационной панели */
+            left: 0;
+            width: 200px; /* Ширина сайдбара */
+            padding-top: 20px;
+            background-color: #f8f9fa; /* Светлый цвет фона для левой панели */
+        }
+
+        .main-content {
+            margin-left: 200px; /* Отступ для сайдбара */
+            padding: 20px;
+            background-color: #ffffff; /* Белый цвет фона для основной части */
+            flex: 1;
+            height: calc(100vh - 56px); /* Высота минус навигационная панель */
+            overflow-y: auto; /* Прокрутка по вертикали */
+        }
+
+        .table-responsive {
+            margin-top: 20px;
+        }
+
+        .navbar-nav.ml-auto {
+            margin-left: auto;
+        }
+
+        .navbar-text .email {
+            font-weight: bold;
+            color: white;
+        }
+
+        .navbar-text .roles {
+            color: white;
+        }
+
+        .table thead th {
+            font-weight: bold;
+            background-color: white; /* Белый фон для столбцов */
+            color: black;
+        }
+
+        .table tbody tr {
+            background-color: white; /* Белый фон для строк */
+        }
+
+        .table tbody tr:nth-of-type(odd) {
+            background-color: #f2f2f2; /* Светло-серый фон для нечетных строк */
+        }
+
+        .table-bordered th, .table-bordered td {
+            border: none; /* Убираем границы */
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .nav-link.active {
+            background-color: #007bff;
+            color: white !important;
+        }
+
+        .section-title {
+            background-color: #ffffff; /* Белый цвет фона */
+            padding: 10px;
+            font-size: 1.25rem;
+            border-bottom: 2px solid #dee2e6; /* Граница снизу */
+            margin-top: 20px; /* Отступ сверху */
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .table-container {
+            width: 90%; /* Увеличиваем ширину таблицы */
+            margin: 0 auto; /* Центрируем таблицу */
+            background-color: #ffffff; /* Белый фон для таблицы */
+            border-radius: 5px; /* Сглаживание углов */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Тень */
+            padding: 20px; /* Внутренний отступ */
+        }
+
+        .custom-table {
+            width: 100%; /* Задаем ширину таблицы */
+            margin-top: 20px;
+        }
+
+        .custom-table th, .custom-table td {
+            padding: 12px 15px; /* Увеличенные отступы для ячеек */
+        }
+
+        .btn-logout {
+            background-color: #6c757d; /* Серый цвет фона */
+            border: none; /* Без рамок */
+            color: white; /* Белый цвет текста */
+        }
+
+        .btn-logout:hover {
+            background-color: #5a6268; /* Более темный серый цвет при наведении */
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-<h1>User Information</h1>
-<table>
-    <thead th:border="1">
-    <tr>
-    <th>Username</th>
-    <th>Password</th>
-    </tr>
-    </thead>
-    <tbody th:border="1">
-    <tr>
-        <td th:text="${user.username}">Username</td>
-        <td th:text="${user.password}">Password</td>
-    </tr>
-    </tbody>
-</table>
-<br>
-<form th:action="@{/logout}" method="post">
-    <button type="submit">Logout</button>
-</form>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-text me-3">
+            <span class="email" th:text="${user.getEmail()}"></span>
+            <span class="roles" th:text="' with roles: ' + ${user.getRoles()}"></span>
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-logout">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Sidebar -->
+<div class="sidebar">
+    <ul class="nav flex-column">
+        <li class="nav-item" th:if="${user.getRoles().toString().contains('ROLE_ADMIN')}">
+            <a class="nav-link" href="/admin">Admin</a>
+        </li>
+        <li class="nav-item active"><a class="nav-link active" href="/user">User</a></li>
+    </ul>
+</div>
+<!-- Main Content -->
+<div class="main-content">
+    <h2 class="mb-4">User Information-page</h2>
+    <h4 class="section-title">About User</h4>
+
+    <!-- Добавляем таблицу -->
+    <div class="table-container">
+        <table class="table custom-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Age</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td th:text="${user.getId()}"></td>
+                <td th:text="${user.getFirstname()}"></td>
+                <td th:text="${user.getLastname()}"></td>
+                <td th:text="${user.getAge()}"></td>
+                <td th:text="${user.getEmail()}"></td>
+                <td th:text="${user.getRoles()}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -46,19 +46,17 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public boolean updateUser(User userToUpdate) {
-        User userFromDB = findByUsername(userToUpdate.getUsername());
-        if(userFromDB==null){
+        if(findUserById(userToUpdate.getId())==null){
             return false;
         }
-        userFromDB.setPassword(bCryptPasswordEncoder.encode(userToUpdate.getPassword()));
-        userFromDB.setRoles(userToUpdate.getRoles());
-        userRepository.updateUser(userFromDB);
+        userToUpdate.setPassword(bCryptPasswordEncoder.encode(userToUpdate.getPassword()));
+        userRepository.updateUser(userToUpdate);
         return true;
     }
 
     @Override
     @Transactional
-    public void deleteUser(long id) {
+    public void deleteUser(Long id) {
         if (userRepository.findUserById(id) != null) {
             userRepository.deleteUser(id);
         }

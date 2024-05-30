@@ -23,9 +23,12 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional
-    public void saveRole(Role role) {
+    public boolean saveRole(Role role) {
         if ((roleRepository.findByName(role.getName())) == null) {
             roleRepository.saveRole(role);
+            return true;
+        } else {
+            return false;
         }
     }
 

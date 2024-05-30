@@ -18,7 +18,7 @@ public interface UserService extends UserDetailsService {
 
     boolean saveUser(User user);
 
-    void deleteUser(long id);
+    void deleteUser(Long id);
 
     User getCurrentUser();
 

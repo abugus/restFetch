@@ -18,12 +18,12 @@ public class DataInitializer {
             roleService.saveRole(userRole);
             roleService.saveRole(adminRole);
 
-            User admin = new User("admin", "password");
-            admin.addRole(adminRole);
+            User admin = new User( "admin","admin",21,"admin@mail.ru","password");
+            admin.addRole(roleService.findByName(adminRole.getName()));
             userService.saveUser(admin);
 
-            User user = new User("user", "password");
-            user.addRole(userRole);
+            User user = new User("user","user",21,"user@mail.ru","password");
+            user.addRole(roleService.findByName(userRole.getName()));
             userService.saveUser(user);
         };
     }
