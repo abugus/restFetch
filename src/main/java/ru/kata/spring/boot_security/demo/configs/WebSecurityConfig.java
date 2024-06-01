@@ -36,7 +36,8 @@ public class WebSecurityConfig {
                 .requestMatchers("/admin/**").not().anonymous()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().successHandler(successUserHandler)
+                .formLogin().loginPage("/login").loginProcessingUrl("/process_login")
+                .successHandler(successUserHandler)
                 .permitAll()
                 .and()
                 .logout().logoutSuccessUrl("/login?logout")
@@ -44,6 +45,7 @@ public class WebSecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
