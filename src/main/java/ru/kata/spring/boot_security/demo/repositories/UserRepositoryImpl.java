@@ -15,44 +15,44 @@ import java.util.List;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
-    @PersistenceContext
-    private EntityManager entityManager;
+
+    private final EntityManager entityManager;
+
+    public UserRepositoryImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+    @Override
+    public void add(User user) {
+        entityManager.persist(user);
+    }
 
     @Override
-    public User findByUsername(String username) {
+    public User getByName(String username) {
         try {
-            return entityManager.createQuery("FROM User WHERE email = :name", User.class)
-                    .setParameter("name", username)
-                    .getSingleResult();
-        } catch (NoResultException e) {
+            return entityManager.createQuery("from User where username=:user", User.class).setParameter("user", username).getSingleResult();
+        } catch (Exception e) {
             return null;
         }
     }
 
     @Override
-    public void save(User user) {
-        entityManager.persist(user);
-    }
-
-    @Override
-    public List<User> findAll() {
-        return entityManager.createQuery
-                ("from User", User.class).getResultList();
-    }
-
-    @Override
-    public User findUserById(long id) {
+    public User getById(Long id){
         return entityManager.find(User.class, id);
     }
 
     @Override
-    public void updateUser(User userToUpdate) {
-        entityManager.merge(userToUpdate);
+    public void update(User user) {
+        entityManager.merge(user);
     }
 
     @Override
-    public void deleteUser(long id) {
+    public void delete(long id) {
         entityManager.remove(entityManager.find(User.class, id));
+    }
+
+    @Override
+    public List<User> getUsersList() {
+        return entityManager.createQuery("from User", User.class).getResultList();
     }
 
     @Override

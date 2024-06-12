@@ -1,63 +1,31 @@
 package ru.kata.spring.boot_security.demo.repositories;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
+
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.models.Role;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Repository
 public class RoleRepositoryImpl implements RoleRepository {
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
-    @Override
-    public Role findByName(String name) {
-        try {
-            return entityManager.createQuery("FROM Role WHERE name = :roleName",
-                    Role.class).setParameter("roleName", name).getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
+    public RoleRepositoryImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
     @Override
-    public Set<Role> findByNames(Set<String> names) {
-        return new HashSet<>(entityManager.createQuery(
-                "SELECT r FROM Role r WHERE r.name IN :names",
-                Role.class).setParameter("names", names).getResultList());
-    }
-
-    @Override
-    public void saveRole(Role role) {
+    public void add(Role role) {
         entityManager.persist(role);
     }
 
     @Override
-    public List<Role> findAll() {
-        return entityManager.createQuery
-                ("from Role", Role.class).getResultList();
-    }
-
-    @Override
-    public Optional<Role> findRoleById(long id) {
-        return Optional.ofNullable(entityManager.find(Role.class, id));
-    }
-
-    @Override
-    public void updateRole(Role updatedRole) {
-        entityManager.merge(updatedRole);
-    }
-
-    @Override
-    public void deleteRole(long id) {
-        entityManager.remove(id);
+    public Role findByName(String roleName) {
+        try {
+            return entityManager.createQuery("from Role where name=:roleName",
+                    Role.class).setParameter("roleName", roleName).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

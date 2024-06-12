@@ -5,17 +5,17 @@ import ru.kata.spring.boot_security.demo.models.User;
 import java.util.List;
 
 public interface UserRepository {
-    User findByUsername(String username);
+    void add(User user);
 
-    void save(User user);
+    User getByName(String username);
 
-    List<User> findAll();
+    User getById(Long id);
 
-    User findUserById(long id);
+    void update(User user);
 
-    void updateUser(User updatedUser);
+    void delete(long id);
 
-    void deleteUser(long id);
+    List<User> getUsersList();
 
     User getCurrentUser();
 }

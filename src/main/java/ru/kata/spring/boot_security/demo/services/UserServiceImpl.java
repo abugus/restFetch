@@ -1,69 +1,78 @@
 package ru.kata.spring.boot_security.demo.services;
 
+import org.hibernate.Hibernate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
+import ru.kata.spring.boot_security.demo.util.UserNotFoundException;
 
 import java.util.*;
 
 @Service
-@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    public UserServiceImpl(UserRepository userRepository,
-                           BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-
-    @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findByUsername(username);
+    @Override
+    public void add(User user) {
+        userRepository.add(user);
+    }
+
+    @Transactional
+    @Override
+    public void update(User user) {
+        userRepository.update(user);
+    }
+
+    @Transactional
+    @Override
+    public void delete(long id) {
+        try {
+            userRepository.delete(id);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Введены неверные данные", e);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public User getUser(long id) {
+        User user = userRepository.getById(id);
         if (user == null) {
-            throw new UsernameNotFoundException(String.format("User '%s' not found", username));
+            throw new UserNotFoundException();
         }
         return user;
     }
 
-
+    @Transactional(readOnly = true)
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<User> getUsersList() {
+        return userRepository.getUsersList();
     }
 
+    @Transactional()
     @Override
-    @Transactional
-    public boolean updateUser(User userToUpdate) {
-        User userFromDB = findUserById(userToUpdate.getId());
-        if (userFromDB == null) {
-            return false;
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.getByName(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("Пользователь не найден");
         }
-        if (userToUpdate.getPassword() == null || userToUpdate.getPassword().isEmpty()) {
-            userToUpdate.setPassword(userFromDB.getPassword());
-        } else if (!Objects.equals(userToUpdate.getPassword(), userFromDB.getPassword())) {
-            userToUpdate.setPassword(bCryptPasswordEncoder.encode(userToUpdate.getPassword()));
-        }
-        userRepository.updateUser(userToUpdate);
-        return true;
+        Hibernate.initialize(user.getRoleSet());
+        return user;
     }
 
-    @Override
+
     @Transactional
-    public void deleteUser(Long id) {
-        if (userRepository.findUserById(id) != null) {
-            userRepository.deleteUser(id);
+    @Override
+    public void usernameCheck(User user) {
+        if (userRepository.getByName(user.getUsername()) != null) {
+            throw new IllegalArgumentException("Пользователь с таким именем существует");
         }
     }
 
@@ -72,24 +81,4 @@ public class UserServiceImpl implements UserService {
         return userRepository.getCurrentUser();
     }
 
-    @Override
-    public User findUserById(Long userId) {
-        try {
-            return userRepository.findUserById(userId);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    @Override
-    @Transactional
-    public boolean saveUser(User user) {
-        User userFromDB = userRepository.findByUsername(user.getUsername());
-        if (userFromDB != null) {
-            return false;
-        }
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-        return true;
-    }
 }
