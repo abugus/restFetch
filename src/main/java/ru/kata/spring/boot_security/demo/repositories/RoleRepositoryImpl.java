@@ -18,14 +18,4 @@ public class RoleRepositoryImpl implements RoleRepository {
     public void add(Role role) {
         entityManager.persist(role);
     }
-
-    @Override
-    public Role findByName(String roleName) {
-        try {
-            return entityManager.createQuery("from Role where name=:roleName",
-                    Role.class).setParameter("roleName", roleName).getSingleResult();
-        } catch (Exception e) {
-            return null;
-        }
-    }
 }
