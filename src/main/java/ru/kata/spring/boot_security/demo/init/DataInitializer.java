@@ -15,19 +15,18 @@ public class DataInitializer {
 
     private final UserService userService;
     private final RoleService roleService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public DataInitializer(UserService userService, RoleService roleService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public DataInitializer(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
+
     @PostConstruct
     protected void CreateAdmin() {
         Role.setRole("ROLE_ADMIN", "ADMIN");
         Role.setRole("ROLE_USER", "USER");
         roleService.add(Role.getRole("ADMIN"));
         roleService.add(Role.getRole("USER"));
-        userService.add(new User("admin", bCryptPasswordEncoder.encode("admin"), Set.of(Role.getRole("ADMIN"), Role.getRole("USER"))));
+        userService.add(new User("admin", "admin", Set.of(Role.getRole("ADMIN"), Role.getRole("USER"))));
     }
 }

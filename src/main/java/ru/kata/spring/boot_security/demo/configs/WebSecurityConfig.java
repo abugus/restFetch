@@ -34,13 +34,13 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/user").hasAnyRole("ADMIN", "USER")
+                                .requestMatchers("/main/**").hasRole("ADMIN")
+                                .requestMatchers("/user").hasRole("USER")
                 )
                 .formLogin(formLogin -> formLogin
-                                .successHandler(successUserHandler)
-                                .loginPage("/login")
-                                .loginProcessingUrl("/auth")
+                        .successHandler(successUserHandler)
+                        .loginPage("/login")
+                        .loginProcessingUrl("/auth")
                 )
                 .logout(LogoutConfigurer::permitAll);
 

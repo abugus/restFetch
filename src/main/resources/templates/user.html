@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>User Page</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <style>
@@ -12,15 +12,8 @@
     </style>
 </head>
 <body>
-<nav class="navbar navbar-dark bg-dark">
-    <span style="color: white">
-        <span th:text="${user.username}"></span>
-        <span>with roles:</span>
-        <span th:each="role :${user.roleSet}">
-            <span th:text="${role.getValue()}"></span>
-        </span>
-    </span>
-    <a href="/logout">Logout</a>
+<nav id="navbar" class="navbar navbar-dark bg-dark">
+    <!-- Контент будет заполняться с помощью JS -->
 </nav>
 <br>
 <div class="row">
@@ -34,8 +27,7 @@
     <div class="col-md-9">
         <div style="background-color: snow" class="tab-content" tabindex="0">
             <!--ПАНЕЛЬ ЮЗЕРА-->
-            <div class="tab-pane fade show active   " id="v-pills-profile" role="tabpanel"
-                 aria-labelledby="v-pills-home-tab"
+            <div class="tab-pane fade show active" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-home-tab"
                  tabindex="0">
                 <h1>User panel</h1>
                 <div class="tab-content">
