@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-@org.springframework.web.bind.annotation.RestController
+@RestController
 @RequestMapping("/api")
 public class AdminRestController {
     private final UserService userService;
@@ -67,7 +67,6 @@ public class AdminRestController {
                 errorMsg.append(error.getField())
                         .append(" - ").append(error.getDefaultMessage())
                         .append(";");
-                System.out.println(errorMsg);
                 throw new UserNotCreatedException(errorMsg.toString());
             }
         }
@@ -86,7 +85,6 @@ public class AdminRestController {
                 errorMsg.append(error.getField())
                         .append(" - ").append(error.getDefaultMessage())
                         .append(";");
-                System.out.println(errorMsg);
                 throw new UserNotCreatedException(errorMsg.toString());
             }
         }

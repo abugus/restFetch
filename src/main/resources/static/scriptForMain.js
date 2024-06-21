@@ -78,7 +78,7 @@ const renderPosts = (data) => {
                                             <div class="form-group">
                                                 <label class="form-label" for="edit-password"><strong>Password</strong></label>
                                                 <input class="form-inline" type="text" name="pass"
-                                                       value="12345" id="edit-password${user.id}"/>
+                                                       value="${user.pass}" id="edit-password${user.id}"/>
                                                 <br>
                                             </div>
                                             <div class="form-label  form-group">
@@ -198,7 +198,7 @@ document.getElementById("user-table").addEventListener('click', (e) => {
     }
     if (editButtonPressed) {
         const nameEdit = document.getElementById(`edit-name${userId}`);
-        const passwordEdit = document.getElementById(`edit-password${userId}`);
+        let passwordEdit = document.getElementById(`edit-password${userId}`);
         const rolesUserEdit = document.getElementById(`edit-role${userId}`);
 
 
@@ -270,7 +270,7 @@ document.getElementById("user-table").addEventListener('click', (e) => {
                                             <div class="form-group">
                                                 <label class="form-label" for="edit-password"><strong>Password</strong></label>
                                                 <input class="form-inline" type="text" name="pass"
-                                                       value="12345" id="edit-password${userId}"/>
+                                                       value="${passwordEdit.value}" id="edit-password${userId}"/>
                                                 <br>
                                             </div>
                                             <div class="form-label  form-group">
@@ -483,7 +483,7 @@ document.getElementById("profile").addEventListener('click', (e) => {
                                             <div class="form-group">
                                                 <label class="form-label" for="edit-password"><strong>Password</strong></label>
                                                 <input class="form-inline" type="text" name="pass"
-                                                       value="12345" id="edit-password${addUserId}"/>
+                                                       value="${passwordEdit.value}" id="edit-password${addUserId}"/>
                                                 <br>
                                             </div>
                                             <div class="form-label  form-group">
@@ -580,7 +580,7 @@ document.getElementById("profile").addEventListener('click', (e) => {
                                     </td>
                                 </tr>`
                         $(table).appendTo(div);
-
+                        $('#home-tab').tab('show');
                     }
                 })
             })
